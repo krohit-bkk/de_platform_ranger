@@ -1,0 +1,39 @@
+<configuration>
+  <!-- Hadoop S3A Configuration -->
+  <property>
+    <name>fs.s3a.endpoint</name>
+    <value>http://minio:9000</value> <!-- Update to your MinIO host and port -->
+  </property>
+
+  <property>
+    <name>fs.s3a.access.key</name>
+    <value>${MINIO_ROOT_USER}</value> <!-- Replace with your actual access key -->
+  </property>
+
+  <property>
+    <name>fs.s3a.secret.key</name>
+    <value>${MINIO_ROOT_PASSWORD}</value> <!-- Replace with your actual secret key -->
+  </property>
+
+  <property>
+    <name>fs.s3a.path.style.access</name>
+    <value>true</value> <!-- Required for MinIO -->
+  </property>
+
+  <property>
+    <name>fs.s3a.impl</name>
+    <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+  </property>
+
+  <!-- Optional for debug or tuning -->
+  <property>
+    <name>fs.s3a.connection.ssl.enabled</name>
+    <value>false</value> <!-- Set true if using HTTPS -->
+  </property>
+
+  <!-- Optional retry configuration -->
+  <property>
+    <name>fs.s3a.connection.maximum</name>
+    <value>100</value>
+  </property>
+</configuration>

@@ -1,0 +1,106 @@
+version: '3.8'
+
+volumes:
+  minio_data:
+    name: minio_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/minio_data
+      o: bind
+
+  postgres_hms_data:
+    name: postgres_hms_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/postgres_hms_data
+      o: bind
+
+  hive_data:
+    name: hive_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/hive_data
+      o: bind
+
+  hive_hs2_data:
+    name: hive_hs2_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/hive_hs2_data
+      o: bind
+
+  postgres_ranger_data:
+    name: postgres_ranger_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/postgres_ranger_data
+      o: bind
+
+  vault_data:
+    name: vault_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/vault_data
+      o: bind
+
+  spark_data:
+    name: spark_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/spark_data
+      o: bind
+
+  trino_data:
+    name: trino_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/trino_data
+      o: bind
+
+  airflow_data:
+    name: airflow_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/airflow_data
+      o: bind
+
+  superset_data:
+    name: superset_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/superset_data
+      o: bind
+
+networks:
+  data_platform_network:
+    name: data_platform_network
+    driver: bridge
+
+services:
+  dummy:
+    image: alpine
+    container_name: dummy
+    command: sleep 60
+    volumes:
+      - minio_data:/mnt/minio
+      - postgres_hms_data:/mnt/pg_hms
+      - postgres_ranger_data:/mnt/pg_ranger
+      - vault_data:/mnt/vault
+      - spark_data:/mnt/spark
+      - trino_data:/mnt/trino
+      - airflow_data:/mnt/airflow
+      - superset_data:/mnt/superset
+      - hive_data:/mnt/hive
+      - hive_hs2_data:/mnt/hive_hs2
+    networks:
+      - data_platform_network

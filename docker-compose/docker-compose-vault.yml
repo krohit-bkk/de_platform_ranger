@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: vault
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "${VAULT_DEV_LISTEN_PORT}:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    command: >
+      /bin/sh -c "
+        vault server -dev -dev-root-token-id=${VAULT_DEV_ROOT_TOKEN_ID} &
+        sleep 2 && /vault/vault-init.sh;
+        wait
+      "
+    volumes:
+      - vault_data:/vault/file
+      - ../docker/vault/vault-init.sh:/vault/vault-init.sh:ro
+      - ../.env.evaluated:/secrets/.env.evaluated
+    networks:
+      - data_platform_network
+
+volumes:
+  vault_data:
+    external: true
+
+networks:
+  data_platform_network:
+    external: true
