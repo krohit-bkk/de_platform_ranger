@@ -23,21 +23,19 @@ services:
       - postgres
     ports:
       - "9083:9083"
-    # environment:
-    #   DB_DRIVER: postgres
-    #   DB_CONNECTION_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-    #   DB_USER: ${HIVE_DB_USER}
-    #   DB_PASSWORD: ${HIVE_DB_PASSWORD}
-    #   HIVE_SKIP_HADOOP_VERSION_CHECK: "true" # Add this to bypass HDFS checks
-    #   IS_RESUME: "true"
     volumes:
-      - ../docker/hive-metastore/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
-      - ../docker/hive-metastore/setup-server.sh:/opt/hive/setup-server.sh
-      - ../docker/hive-metastore/init-schema.sh:/opt/hive/init-schema.sh
+      - ../docker/hive/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
+      - ../docker/hive/hms/hms-setup.sh:/opt/hive/hms-setup.sh
+      - ../docker/hive/hms/init-schema.sh:/opt/hive/init-schema.sh
       - hive_data:/opt/hive/data
       - ${PROJECT_ROOT}/data/hive_data/hive-tmp:/tmp/hive
-    command: /bin/bash -c "chmod +x /opt/hive/setup-server.sh && /bin/bash /opt/hive/setup-server.sh && tail -f /dev/null"
+    command: /bin/bash -c "chmod +x /opt/hive/hms-setup.sh && /bin/bash /opt/hive/hms-setup.sh && tail -f /dev/null"
     entrypoint: []
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9083"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - data_platform_network
           
@@ -54,12 +52,12 @@ services:
       - "10000:10000"  
       - "10002:10002"  
     volumes:
-      - ../docker/hive-metastore/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
-      - ../docker/hive-metastore/conf/core-site.xml.tmpl:/opt/hive/conf/core-site.xml.tmpl
-      - ../docker/hive-server/setup-server.sh:/opt/hive/setup-server.sh
+      - ../docker/hive/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
+      - ../docker/hive/conf/core-site.xml.tmpl:/opt/hive/conf/core-site.xml.tmpl
+      - ../docker/hive/hs2/hs2-setup.sh:/opt/hive/hs2-setup.sh
       - hive_hs2_data:/opt/hive/data
       - ${PROJECT_ROOT}/data/hive_hs2_data/hive-tmp:/tmp/hive
-    entrypoint: ["/bin/bash", "/opt/hive/setup-server.sh"]
+    entrypoint: ["/bin/bash", "/opt/hive/hs2-setup.sh"]
     networks:
       - data_platform_network
 

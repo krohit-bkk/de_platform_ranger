@@ -99,10 +99,10 @@ docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base
 docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d && docker logs -f vault
 
 # MinIO service
-docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio up -d && docker logs -f minio
+docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d && docker logs -f minio
 
 # Hive Metastore service
-docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive-metastore.yml up -d && docker logs -f hive-metastore
+docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-metastore.yml up -d && docker logs -f hive-metastore
 
 # HiveServer2 service
 docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-metastore.yml up -d hiveserver2 && docker logs -f hiveserver2
