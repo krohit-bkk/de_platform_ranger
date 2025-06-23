@@ -10,7 +10,7 @@ services:
     entrypoint: /opt/scripts/postgres-entrypoint.sh
     volumes:
       - postgres_hms_data:/var/lib/postgresql/data
-      - ../docker/postgres-hms/postgres-entrypoint.sh:/opt/scripts/postgres-entrypoint.sh
+      - ../docker/hive/postgres-hms/postgres-entrypoint.sh:/opt/scripts/postgres-entrypoint.sh
     networks:
       - data_platform_network
 

@@ -83,7 +83,6 @@ function start_all(){
 
   # Hive (HMS + HS2) services
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d
-  sleep 10
 }
 
 # Stop all services
