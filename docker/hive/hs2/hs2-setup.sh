@@ -75,10 +75,11 @@ while ! nc -z hive-metastore 9083 >/dev/null; do
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] - Hive Metastore not up yet. Retrying in 10 seconds..."
   sleep 10
 done
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Hive Metastore is up!"
+echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] Hive Metastore is up!\n"
 
 
-# Step 1: Generate a verbose Hive log4j2 config
+# NOTE: Uncomment if verbose logging doesn't work via attached volume - hive-log4j2.properties
+# Generate a verbose Hive log4j2 config
 touch $HIVE_HOME/conf/hive-log4j2.properties
 cat > $HIVE_HOME/conf/hive-log4j2.properties <<EOF
 status = WARN
@@ -101,15 +102,13 @@ rootLogger.appenderRef.stdout.ref = STDOUT
 rootLogger.appenderRef.file.ref = FILE
 EOF
 
-set -x
-echo "Starting HiveServer2 service..."
-
 export HIVE_SERVER2_OPTS="-Dlog4j.configurationFile=$HIVE_HOME/conf/hive-log4j2.properties"
 export HIVE_METASTORE_URI=thrift://hive-metastore:9083
+
+echo -e "\nStarting HiveServer2 service..."
 nohup $HIVE_HOME/bin/hive --service hiveserver2 > /opt/hive/logs/stdout.log 2>&1 &
 
 # Check if Hiveserver2 service is up
-echo ""
 echo "Waiting for Hiveserver2 to be available at hiveserver2:10000..."
 while ! nc -z hiveserver2 10000 >/dev/null; do
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] - Hiveserver2 not up yet. Retrying in 10 seconds..."
@@ -117,8 +116,7 @@ while ! nc -z hiveserver2 10000 >/dev/null; do
 done
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Hiveserver2 is up! Logs available at - [/opt/hive/logs/stdout.log]"
 
-echo ""
-echo "Checking sample data from Hive..."
+echo -e "\nChecking sample data from Hive..."
 beeline -u jdbc:hive2://hiveserver2:10000/airline -e "SELECT * FROM airline.passenger_flights LIMIT 10;" || true
 echo ""
 

@@ -1,22 +1,6 @@
 version: '3.8'
 
 services:
-  # minio:
-  #   image: minio/minio:latest
-  #   container_name: minio
-  #   volumes:
-  #     - minio_data:/data
-  #     - ../docker/minio/init/entrypoint.sh:/entrypoint.sh:ro
-  #     - ../docker/minio/init/create-buckets.sh:/create-buckets.sh:ro
-  #   ports:
-  #     - "${MINIO_API_PORT}:9000"
-  #     - "${MINIO_CONSOLE_PORT}:9001"
-  #   entrypoint: sh /entrypoint.sh
-  #   networks:
-  #     - data_platform_network
-  #   environment:
-  #     VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
-
   minio:
     build:
       context: ./../docker/minio

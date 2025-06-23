@@ -17,7 +17,7 @@ if [ ! -f /metastore/metastore_db/metastore.script ]; then
 fi
 
 # Start Metastore in background with IS_RESUME
-echo -e">>>> Starting Hive Metastore..."
+echo ">>>> Starting Hive Metastore..."
 export IS_RESUME="true"
 $HIVE_HOME/bin/hive --service metastore &
 sleep 10
