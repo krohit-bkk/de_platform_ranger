@@ -114,7 +114,8 @@ function wipe_everything(){
   docker network prune -f
 }
 
-# Kill a set service. Usage: kill_service <service_name1> <service_name2> ...
+# Kill services... 
+# Usage: kill_service <service_name1> <service_name2> ...
 function kill_service() {
   for svc in "$@"; do
     echo "Handling service: $svc"
@@ -133,9 +134,16 @@ function kill_service() {
     sudo docker rm -f "$svc" 2>/dev/null || echo "Failed to remove $svc"
 
     # Remove associated volumes if service is postgres or minio
-    if [[ "$svc" =~ postgres|minio ]]; then
+    # if [[ "$svc" =~ postgres|minio ]]; then
+    if [[ "$svc" =~ postgres ]]; then
       echo "Pruning unused volumes for $svc"
       sudo docker volume prune -f 2>/dev/null || true
+
+      if [[ "$svc" == "postgres" ]]; then
+        echo "Cleaning Hive-Metastore PostgreSQL data directory..."
+        sudo rm -rf "${PROJECT_ROOT}/data/postgres_hms_data"
+        sudo install -d -m 777 "${PROJECT_ROOT}/data/postgres_hms_data"
+      fi
     fi
     echo ""
   done
