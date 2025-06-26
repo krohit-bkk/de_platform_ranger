@@ -87,10 +87,18 @@ function start_all(){
 
   # Hive (HMS + HS2) services
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d
+  sleep 10
+
+  # Spark service
+  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-master spark-worker-1 spark-worker-2
 }
 
 # Stop all services
 function clean_all(){
+  # Spark service
+  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml down -v
+  sleep 3
+
   # Hive Metastore service
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml down -v
   sleep 3
@@ -153,19 +161,23 @@ function kill_service() {
   done
 }
 
-# FIRE UP DOCKER COMPOSE MANUALLY
-# ===============================
+# FIRE UP DOCKER COMPOSE/SERVICES MANUALLY
+# ========================================
 # Base service
-# docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml up -d 
+alias start_base="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml up -d "
 
 # Vault service
-# docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d && docker logs -f vault
+alias start_vault="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d && logs -f vault"
 
 # MinIO service
-# docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d && docker logs -f minio
+alias start_minio="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d && logs -f minio"
 
 # Hive Metastore service
-# docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d && docker logs -f hive-metastore
+alias start_hms="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d && logs -f hive-metastore"
 
 # HiveServer2 service
-# docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d hiveserver2 && docker logs -f hiveserver2
+alias start_hs2="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d hiveserver2 && logs -f hiveserver2"
+
+# Test Spark ETL jobs
+alias spark_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-test && logs -f spark-test"
+alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d delta-lake-test && logs -f delta-lake-test"

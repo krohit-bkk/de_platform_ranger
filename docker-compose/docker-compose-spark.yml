@@ -22,9 +22,7 @@ services:
       - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - ../docker/spark/sample-jobs:/opt/spark/jobs
       - spark_data:/bitnami
-    # Provide installation steps in setup-spark.sh and uncomment the commented command 
     command: /bin/bash -c "/opt/bitnami/spark-master-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh && tail -f /dev/null"
-    # command: /bin/bash -c "/opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh && tail -f /dev/null"
     networks:
       - data_platform_network
     # deploy:
@@ -54,9 +52,7 @@ services:
       - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
       - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - spark_data:/bitnami
-    # Provide installation steps in setup-spark.sh and uncomment the commented command 
     command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
-    # command: /bin/bash -c "/opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
     networks:
       - data_platform_network
 
@@ -81,12 +77,9 @@ services:
       - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
       - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - spark_data:/bitnami
-    # Provide installation steps in setup-spark.sh and uncomment the commented command 
     command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
-    # command: /bin/bash -c "/opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
     networks:
       - data_platform_network
-
 
   # Spark ETL Test Client
   spark-test:
@@ -105,7 +98,7 @@ services:
       - data_platform_network
     restart: on-failure
 
-  # Delta Lake Test Client
+  # Spark Delta Lake Test Client
   delta-lake-test:
     image: bitnami/spark:3.3.0
     container_name: delta-lake-test
