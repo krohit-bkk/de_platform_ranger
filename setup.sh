@@ -42,6 +42,10 @@ echo -e "
 ls -lrt ${PROJECT_ROOT}/data/
 
 
+# Execute permissions for Spark jobs
+sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-master-setup.sh
+sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-worker-setup.sh
+
 # DOCKER UTILS
 # ============
 # Create docker functions and aliases

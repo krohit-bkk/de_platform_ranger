@@ -75,7 +75,7 @@ while ! nc -z hive-metastore 9083 >/dev/null; do
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] - Hive Metastore not up yet. Retrying in 10 seconds..."
   sleep 10
 done
-echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] Hive Metastore is up!\n"
+echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] - Hive Metastore is up!\n"
 
 
 # NOTE: Uncomment if verbose logging doesn't work via attached volume - hive-log4j2.properties
