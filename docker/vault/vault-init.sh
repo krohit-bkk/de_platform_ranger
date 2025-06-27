@@ -24,7 +24,9 @@ vault kv put secret/data-platform/hms \
     db_user="$HMS_DB_USER" \
     db_password="$HMS_DB_PASSWORD" \
     metastore_db="$HMS_DB_NAME" \
-    hms_uri="$HMS_URI"
+    hms_uri="$HMS_URI" \
+    hms_pg_jdbc="$HMS_PG_JDBC" \
+    hms_db_name="$HMS_DB_NAME"
 
 vault kv put secret/data-platform/spark \
     spark_sql_warehouse_dir="$SPARK_SQL_WAREHOUSE_DIR" \

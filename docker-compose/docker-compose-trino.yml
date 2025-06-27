@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Trino Coordinator (Master)
+  trino-coordinator:
+    image: trinodb/trino:423
+    container_name: trino-coordinator
+    user: root
+    ports:
+      - "8081:8080"
+    entrypoint: ["/etc/trino/setup-coordinator.sh"]
+    volumes:
+      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/setup-coordinator.sh:/etc/trino/setup-coordinator.sh
+      - trino_data:/data/trino
+    environment:
+      - TRINO_NODE_TYPE=coordinator
+      - TRINO_ETC_DIR=/etc/trino
+    networks:
+      - data_platform_network
+
+  # Trino Worker 1
+  trino-worker-1:
+    image: trinodb/trino:423
+    container_name: trino-worker-1
+    user: root
+    depends_on:
+      - trino-coordinator
+    entrypoint: ["/etc/trino/setup-worker.sh"]
+    volumes:
+      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/setup-worker.sh:/etc/trino/setup-worker.sh
+    environment:
+      - TRINO_NODE_TYPE=worker
+      - TRINO_ETC_DIR=/etc/trino
+    networks:
+      - data_platform_network
+
+  # Trino Worker 2
+  trino-worker-2:
+    image: trinodb/trino:423
+    container_name: trino-worker-2
+    user: root
+    depends_on:
+      - trino-coordinator
+    entrypoint: ["/etc/trino/setup-worker.sh"]
+    volumes:
+      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/setup-worker.sh:/etc/trino/setup-worker.sh
+    environment:
+      - TRINO_NODE_TYPE=worker
+      - TRINO_ETC_DIR=/etc/trino
+    networks:
+      - data_platform_network
+
+  # Trino Test Client
+  trino-test:
+    image: trinodb/trino:423
+    container_name: trino-test
+    depends_on:
+      - trino-coordinator
+    volumes:
+      - ../docker/trino/jobs/trino-test.sh:/trino-test.sh
+      - ../docker/trino/trino-delta-lake-423.jar:/usr/lib/trino/plugin/deltalake/trino-delta-lake-423.jar
+    entrypoint: ["/bin/bash", "/trino-test.sh"]
+    networks:
+      - data_platform_network
+    restart: on-failure
+
+volumes:
+  trino_data:
+    external: true
+
+networks:
+  data_platform_network:
+    external: true

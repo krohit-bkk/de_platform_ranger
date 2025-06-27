@@ -1,119 +1,6 @@
 version: '3.8'
 
 services:
-  # # Apache Spark for ETL
-  # spark-master:
-  #   image: bitnami/spark:3.3.0
-  #   container_name: spark-master
-  #   user: root
-  #   ports:
-  #     - "8080:8080"
-  #     - "7077:7077"
-  #   environment:
-  #     - SPARK_MODE=master
-  #     - SPARK_RPC_AUTHENTICATION_ENABLED=no
-  #     - SPARK_RPC_ENCRYPTION_ENABLED=no
-  #     - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-  #     - SPARK_SSL_ENABLED=no
-  #   volumes:
-  #     - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
-  #     - ../docker/spark/spark-master-setup.sh:/opt/bitnami/spark-master-setup.sh
-  #     - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-  #     - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
-  #     - ../docker/spark/sample-jobs:/opt/spark/jobs
-  #     - spark_data:/bitnami
-  #   command: /bin/bash -c "/opt/bitnami/spark-master-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh && tail -f /dev/null"
-  #   networks:
-  #     - data_platform_network
-  #   # deploy:
-  #   #   resources:
-  #   #     limits:
-  #   #       memory: 2g
-
-  # spark-worker-1:
-  #   image: bitnami/spark:3.3.0
-  #   container_name: spark-worker-1
-  #   user: root
-  #   depends_on:
-  #     - spark-master
-  #   environment:
-  #     - SPARK_MODE=worker
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #     - SPARK_WORKER_MEMORY=2G
-  #     - SPARK_WORKER_CORES=2
-  #     - SPARK_RPC_AUTHENTICATION_ENABLED=no
-  #     - SPARK_RPC_ENCRYPTION_ENABLED=no
-  #     - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-  #     - SPARK_SSL_ENABLED=no
-  #   volumes:
-  #     - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
-  #     - ../docker/spark/spark-worker-setup.sh:/opt/bitnami/spark-worker-setup.sh
-  #     - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-  #     - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
-  #     - spark_data:/bitnami
-  #   command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
-  #   networks:
-  #     - data_platform_network
-
-  # spark-worker-2:
-  #   image: bitnami/spark:3.3.0
-  #   container_name: spark-worker-2
-  #   user: root
-  #   depends_on:
-  #     - spark-master
-  #   environment:
-  #     - SPARK_MODE=worker
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #     - SPARK_WORKER_MEMORY=2G
-  #     - SPARK_WORKER_CORES=2
-  #     - SPARK_RPC_AUTHENTICATION_ENABLED=no
-  #     - SPARK_RPC_ENCRYPTION_ENABLED=no
-  #     - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-  #     - SPARK_SSL_ENABLED=no
-  #   volumes:
-  #     - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
-  #     - ../docker/spark/spark-worker-setup.sh:/opt/bitnami/spark-worker-setup.sh
-  #     - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-  #     - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
-  #     - spark_data:/bitnami
-  #   command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
-  #   networks:
-  #     - data_platform_network
-
-  # # Spark ETL Test Client
-  # spark-test:
-  #   image: bitnami/spark:3.3.0
-  #   container_name: spark-test
-  #   user: root
-  #   depends_on:
-  #     - spark-master
-  #   volumes:
-  #     - ../docker/spark/sample-jobs:/opt/spark/jobs
-  #     - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-  #     - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
-  #     - ../docker/spark/conf/log4j.properties:/opt/bitnami/spark/conf/log4j.properties
-  #   entrypoint: ["/bin/bash", "/opt/spark/jobs/etl-regular/etl.sh"]
-  #   networks:
-  #     - data_platform_network
-  #   restart: on-failure
-
-  # # Spark Delta Lake Test Client
-  # delta-lake-test:
-  #   image: bitnami/spark:3.3.0
-  #   container_name: delta-lake-test
-  #   user: root
-  #   depends_on:
-  #     - spark-master
-  #   volumes:
-  #     - ../docker/spark/sample-jobs:/opt/spark/jobs
-  #     - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-  #     - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
-  #     - ../docker/spark/conf/log4j.properties:/opt/bitnami/spark/conf/log4j.properties
-  #   entrypoint: ["/bin/bash", "/opt/spark/jobs/etl-deltalake/delta-etl.sh"]
-  #   networks:
-  #     - data_platform_network
-  #   restart: on-failure
-
   # Apache Spark for ETL
   spark-master:
     image: custom-spark:0.0.1
@@ -131,8 +18,6 @@ services:
     volumes:
       - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
       - ../docker/spark/spark-master-setup.sh:/opt/bitnami/spark-master-setup.sh
-      # - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-      # - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - ../docker/spark/sample-jobs:/opt/spark/jobs
       - spark_data:/bitnami
     command: /bin/bash -c "/opt/bitnami/spark-master-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh && tail -f /dev/null"
@@ -161,8 +46,6 @@ services:
     volumes:
       - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
       - ../docker/spark/spark-worker-setup.sh:/opt/bitnami/spark-worker-setup.sh
-      # - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-      # - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - spark_data:/bitnami
     command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
     networks:
@@ -186,8 +69,6 @@ services:
     volumes:
       - ../docker/spark/conf/spark-defaults.xml.tmpl:/opt/bitnami/spark/conf/spark-defaults.xml.tmpl
       - ../docker/spark/spark-worker-setup.sh:/opt/bitnami/spark-worker-setup.sh
-      # - ../docker/spark/setup-env.sh:/opt/bitnami/setup-env.sh
-      # - ../docker/spark/download-jars.sh:/opt/bitnami/download-jars.sh
       - spark_data:/bitnami
     command: /bin/bash -c "/opt/bitnami/spark-worker-setup.sh && /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh"
     networks:
@@ -222,6 +103,7 @@ services:
     networks:
       - data_platform_network
     restart: on-failure
+
 networks:
   data_platform_network:
     external: true

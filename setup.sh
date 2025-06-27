@@ -45,6 +45,9 @@ ls -lrt ${PROJECT_ROOT}/data/
 # Execute permissions for Spark jobs
 sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-master-setup.sh
 sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-worker-setup.sh
+sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-coordinator.sh
+sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-worker.sh
+sudo chmod +x ${PROJECT_ROOT}/docker/trino/jobs/trino-test.sh
 
 # DOCKER UTILS
 # ============
