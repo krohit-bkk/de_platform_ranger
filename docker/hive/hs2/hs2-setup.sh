@@ -51,17 +51,8 @@ export DB_PASSWORD=${POSTGRES_PASSWORD}
 export HIVE_SKIP_HADOOP_VERSION_CHECK="true" # Add this to bypass HDFS checks
 export IS_RESUME="true"
 
-echo ">>>> MINIO_ROOT_USER: ${MINIO_ROOT_USER}"
-echo ">>>> MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}"
-echo ">>>> POSTGRES_USER: ${POSTGRES_USER}"
-echo ">>>> POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
+# Verify environment variables
 echo ">>>> POSTGRES_DB: ${POSTGRES_DB}"
-echo ">>>> DB_DRIVER: ${DB_DRIVER}"
-echo ">>>> DB_CONNECTION_URL: ${DB_CONNECTION_URL}"
-echo ">>>> DB_USER: ${DB_USER}"
-echo ">>>> DB_PASSWORD: ${DB_PASSWORD}"
-echo ">>>> HIVE_SKIP_HADOOP_VERSION_CHECK: ${HIVE_SKIP_HADOOP_VERSION_CHECK}"
-echo ">>>> IS_RESUME: ${IS_RESUME}"
 
 # 🧪 Render hive-site.xml dynamically
 echo "🧪 Rendering hive-site.xml..."
@@ -120,5 +111,4 @@ echo -e "\nChecking sample data from Hive..."
 beeline -u jdbc:hive2://hiveserver2:10000/airline -e "SELECT * FROM airline.passenger_flights LIMIT 10;" || true
 echo ""
 
-# nohup $HIVE_HOME/bin/hive --service hiveserver2 > /opt/hive/logs/hiveserver2.out 2>&1 &
 tail -f /dev/null

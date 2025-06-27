@@ -185,3 +185,18 @@ alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compo
 # Create custom docker images
 # ===========================
 # docker build --no-cache -t custom-spark ${PROJECT_ROOT}/docker/spark/
+
+# OPTIONAL: Keep local copy of JAR files for quick dev and testing
+# ================================================================
+# S3 connector jars
+curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.1/hadoop-aws-3.3.1.jar -o ${PROJECT_ROOT}/docker/spark/lib/hadoop-aws-3.3.1.jar
+curl -s https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.901/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar
+
+# Delta Lake jars
+curl -s https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.2.0/delta-core_2.12-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-core_2.12-2.2.0.jar
+curl -s https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-storage-2.2.0.jar
+
+# Hive Service Related jars
+cp ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/hive/lib/aws-java-sdk-bundle-1.11.901.jar
+curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar -o ${PROJECT_ROOT}/docker/hive/lib/hadoop-aws-3.2.0.jar
+curl -s https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar -o ${PROJECT_ROOT}/docker/hive/lib/postgresql-42.3.1.jar 

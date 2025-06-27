@@ -22,3 +22,6 @@ docker-compose.override.yml
 # Hive and data/temp dirs
 data/
 derby.log
+
+# Ignore jar/libs 
+docker/*/lib/
