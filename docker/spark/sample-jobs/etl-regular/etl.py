@@ -30,7 +30,8 @@ def main():
   df.show(truncate=False)
   print(f"\n>>>> Number of records in output table in Hive [{output_table}]: {df.count()}\n")
 
-  print("\n>>>> Read/Write ops with hive completed successfully.\nClosign application...\n")
+  print("\n>>>> Read/Write ops with hive completed successfully.\n")
+  print("\n>>>> Exiting PySpark ETL job.\n")
 
   # Stop SparkSession
   spark.stop()

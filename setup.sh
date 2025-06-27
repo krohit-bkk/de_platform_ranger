@@ -181,3 +181,7 @@ alias start_hs2="docker-compose --env-file .env.evaluated -f ./docker-compose/do
 # Test Spark ETL jobs
 alias spark_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-test && logs -f spark-test"
 alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d delta-lake-test && logs -f delta-lake-test"
+
+# Create custom docker images
+# ===========================
+# docker build --no-cache -t custom-spark ${PROJECT_ROOT}/docker/spark/

@@ -30,9 +30,6 @@ vault kv put secret/data-platform/spark \
     spark_sql_warehouse_dir="$SPARK_SQL_WAREHOUSE_DIR" \
     hms_uri="$HMS_URI"
 
-    # SPARK_SQL_WAREHOUSE_DIR=s3a://raw-data/warehouse
-    # HMS_URI=thrift://hive-metastore:9083
-
 vault kv put secret/data-platform/ranger \
     db_user="$RANGER_DB_USER" \
     db_password="$RANGER_DB_PASSWORD"

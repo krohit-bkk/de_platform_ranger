@@ -1,7 +1,6 @@
 # Set up Spark environment variables
 # ==================================
 echo -e "Setting up Spark environment... \n"
-install_packages curl jq gettext netcat
 
 # Fetch secrets from Vault
 # ========================

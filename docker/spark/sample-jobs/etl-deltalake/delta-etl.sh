@@ -4,17 +4,15 @@
 echo "Testing Delta Lake functionality..."
 
 # Setup environment variables
-source /opt/bitnami/setup-env.sh
+source /opt/setup-env.sh
+echo -e "\nHMS_URI: ${HMS_URI}\n"
 
 # Installing delta-spark dependency for pyspark 
 pip install delta-spark==2.2.0
 
-# Delta Lake JARs
-curl -o /opt/bitnami/spark/jars/delta-core_2.12-2.2.0.jar \
-  https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.2.0/delta-core_2.12-2.2.0.jar
-
-curl -o /opt/bitnami/spark/jars/delta-storage-2.2.0.jar \
-  https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar
+# Delta Lake JARs : Now shipped with custom-spark image
+# curl -o /opt/bitnami/spark/jars/delta-core_2.12-2.2.0.jar https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.2.0/delta-core_2.12-2.2.0.jar
+# curl -o /opt/bitnami/spark/jars/delta-storage-2.2.0.jar   https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar
 
 # Wait for Spark master to be ready
 echo "Waiting for Spark master to be ready..."

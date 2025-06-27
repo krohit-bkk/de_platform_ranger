@@ -4,7 +4,8 @@
 echo "Testing Spark ETL job..."
 
 # Setup environment variables
-source /opt/bitnami/setup-env.sh
+source /opt/setup-env.sh
+echo -e "\nHMS_URI: ${HMS_URI}\n"
 
 # Wait for Spark master to be ready
 echo "Waiting for Spark master to be ready..."
