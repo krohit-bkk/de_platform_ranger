@@ -36,10 +36,10 @@ vault kv put secret/data-platform/spark \
     hms_uri="$HMS_URI"
 
 vault kv put secret/data-platform/ranger \
-    db_user="$RANGER_DB_USER" \
-    db_password="$RANGER_DB_PASSWORD"
+    renger_db_user="$RANGER_DB_USER" \
+    renger_db_password="$RANGER_DB_PASSWORD"
 
 vault kv put secret/data-platform/airflow \
-    sql_alchemy_uri="$AIRFLOW__DATABASE__SQL_ALCHEMY_CONN"
+    airflow__database__sql_alchemy_conn="$AIRFLOW__DATABASE__SQL_ALCHEMY_CONN"
 
 info "✅ Vault secrets successfully written."
