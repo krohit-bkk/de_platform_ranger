@@ -1,7 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 set -e
+# Blue info log
+function info() {
+  echo -e "\n\e[1;34m[$(date '+%Y-%m-%d %H:%M:%S')] - $1\e[0m\n"
+}
 
-echo "📦 Creating buckets..."
+info "📦 Creating buckets..."
 
 mc alias set myminio http://localhost:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
 
@@ -13,4 +17,4 @@ done
 mc cp --recursive /sample_data/ "myminio/raw-data/"
 mc ls myminio/raw-data/
 
-echo "🎉 Buckets created"
+info "🎉 Buckets created"

@@ -10,7 +10,10 @@ services:
       - "8081:8080"
     entrypoint: ["/etc/trino/setup-coordinator.sh"]
     volumes:
-      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/etc/jvm.config:/etc/trino/jvm.config
+      - ../docker/trino/etc/log.properties:/etc/trino/log.properties
+      - ../docker/trino/etc/catalog:/etc/trino/catalog 
+      - ../docker/trino/etc/config.properties.tmpl:/etc/trino/config.properties.tmpl
       - ../docker/trino/setup-coordinator.sh:/etc/trino/setup-coordinator.sh
       - trino_data:/data/trino
     environment:
@@ -28,7 +31,10 @@ services:
       - trino-coordinator
     entrypoint: ["/etc/trino/setup-worker.sh"]
     volumes:
-      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/etc/jvm.config:/etc/trino/jvm.config
+      - ../docker/trino/etc/log.properties:/etc/trino/log.properties
+      - ../docker/trino/etc/catalog:/etc/trino/catalog 
+      - ../docker/trino/etc/config.properties.tmpl:/etc/trino/config.properties.tmpl
       - ../docker/trino/setup-worker.sh:/etc/trino/setup-worker.sh
     environment:
       - TRINO_NODE_TYPE=worker
@@ -45,7 +51,10 @@ services:
       - trino-coordinator
     entrypoint: ["/etc/trino/setup-worker.sh"]
     volumes:
-      - ../docker/trino/etc:/etc/trino
+      - ../docker/trino/etc/jvm.config:/etc/trino/jvm.config
+      - ../docker/trino/etc/log.properties:/etc/trino/log.properties
+      - ../docker/trino/etc/catalog:/etc/trino/catalog 
+      - ../docker/trino/etc/config.properties.tmpl:/etc/trino/config.properties.tmpl
       - ../docker/trino/setup-worker.sh:/etc/trino/setup-worker.sh
     environment:
       - TRINO_NODE_TYPE=worker
@@ -61,7 +70,6 @@ services:
       - trino-coordinator
     volumes:
       - ../docker/trino/jobs/trino-test.sh:/trino-test.sh
-      - ../docker/trino/trino-delta-lake-423.jar:/usr/lib/trino/plugin/deltalake/trino-delta-lake-423.jar
     entrypoint: ["/bin/bash", "/trino-test.sh"]
     networks:
       - data_platform_network

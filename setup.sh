@@ -92,12 +92,20 @@ function start_all(){
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d
   sleep 10
 
-  # Spark service
+  # Build custom-spark image and start Spark services
+  # docker build --no-cache -t custom-spark:0.0.1 ${PROJECT_ROOT}/docker/spark/
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-master spark-worker-1 spark-worker-2
+
+  # Trino services
+  # docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2
 }
 
 # Stop all services
 function clean_all(){
+  # Stop Trino services
+  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml down -v
+  sleep 3
+
   # Spark service
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml down -v
   sleep 3
@@ -124,9 +132,11 @@ function wipe_everything(){
   # Remove all containers
   rma
   # Remove all images
-  docker rmi -f $(docker images -q)
+  # docker rmi -f $(docker images -q)
   # Remove all networks
   docker network prune -f
+  # Remoce data folder for mounts
+  sudo rm -rf ${PROJECT_ROOT}/data
 }
 
 # Kill services... 
@@ -191,15 +201,15 @@ alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compo
 
 # OPTIONAL: Keep local copy of JAR files for quick dev and testing
 # ================================================================
-# S3 connector jars
-curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.1/hadoop-aws-3.3.1.jar -o ${PROJECT_ROOT}/docker/spark/lib/hadoop-aws-3.3.1.jar
-curl -s https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.901/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar
+# # S3 connector jars
+# curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.1/hadoop-aws-3.3.1.jar -o ${PROJECT_ROOT}/docker/spark/lib/hadoop-aws-3.3.1.jar
+# curl -s https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.901/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar
 
-# Delta Lake jars
-curl -s https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.2.0/delta-core_2.12-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-core_2.12-2.2.0.jar
-curl -s https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-storage-2.2.0.jar
+# # Delta Lake jars
+# curl -s https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.2.0/delta-core_2.12-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-core_2.12-2.2.0.jar
+# curl -s https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar -o ${PROJECT_ROOT}/docker/spark/lib/delta-storage-2.2.0.jar
 
-# Hive Service Related jars
-cp ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/hive/lib/aws-java-sdk-bundle-1.11.901.jar
-curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar -o ${PROJECT_ROOT}/docker/hive/lib/hadoop-aws-3.2.0.jar
-curl -s https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar -o ${PROJECT_ROOT}/docker/hive/lib/postgresql-42.3.1.jar 
+# # Hive Service Related jars
+# cp ${PROJECT_ROOT}/docker/spark/lib/aws-java-sdk-bundle-1.11.901.jar -o ${PROJECT_ROOT}/docker/hive/lib/aws-java-sdk-bundle-1.11.901.jar
+# curl -s https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar -o ${PROJECT_ROOT}/docker/hive/lib/hadoop-aws-3.2.0.jar
+# curl -s https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar -o ${PROJECT_ROOT}/docker/hive/lib/postgresql-42.3.1.jar 

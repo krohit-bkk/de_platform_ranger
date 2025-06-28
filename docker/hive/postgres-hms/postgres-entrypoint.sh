@@ -22,9 +22,9 @@ fetch_from_vault() {
 }
 
 echo "🔐 Fetching MinIO credentials from Vault..."
-export POSTGRES_USER=$(fetch_from_vault "db_user" "data-platform/hms")
-export POSTGRES_PASSWORD=$(fetch_from_vault "db_password" "data-platform/hms")
-export POSTGRES_DB=$(fetch_from_vault "metastore_db" "data-platform/hms")
+export POSTGRES_USER=$(fetch_from_vault "hms_db_user" "data-platform/hms")
+export POSTGRES_PASSWORD=$(fetch_from_vault "hms_db_password" "data-platform/hms")
+export POSTGRES_DB=$(fetch_from_vault "hms_db_name" "data-platform/hms")
 
 echo "✅ Secrets loaded: POSTGRES_USER=$POSTGRES_USER, DB=$POSTGRES_DB"
 

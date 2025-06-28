@@ -1,22 +1,27 @@
 #!/bin/bash
 
+# Blue info log
+function info() {
+  echo -e "\n\e[1;34m[$(date '+%Y-%m-%d %H:%M:%S')] - $1\e[0m\n"
+}
+
 # This script tests the Spark ETL job
-echo "Testing Spark ETL job..."
+info "Testing Spark ETL job..."
 
 # Setup environment variables
 source /opt/setup-env.sh
-echo -e "\nHMS_URI: ${HMS_URI}\n"
+info "\nHMS_URI: ${HMS_URI}\n"
 
 # Wait for Spark master to be ready
-echo "Waiting for Spark master to be ready..."
+info "Waiting for Spark master to be ready..."
 while ! nc -z spark-master 7077 >/dev/null; do
-  echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is not up yet! Checked at [spark-master:7077]. Retrying in 10 seconds..."
+  info "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is not up yet! Checked at [spark-master:7077]. Retrying in 10 seconds..."
   sleep 10
 done
-echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is up at [spark-master:7077]! \n"
+info "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is up at [spark-master:7077]! \n"
 
 # Submit the sample ETL job
-echo -e "Submitting sample ETL job...\n"
+info "Submitting sample ETL job...\n"
 /opt/bitnami/spark/bin/spark-submit \
   --master spark://spark-master:7077 \
   --conf spark.jars.ivy=/tmp/.ivy \
@@ -34,10 +39,10 @@ echo -e "Submitting sample ETL job...\n"
   /opt/spark/jobs/etl-regular/etl.py
 
 if [ $? -eq "0" ]; then 
-  echo "Spark ETL job test completed!"
+  info "Spark ETL job test completed!"
   exit 0
 fi 
 
-echo ">>>> Spark ETL job failed! I'll be live for 5 min so that you can debug..."
+info ">>>> Spark ETL job failed! I'll be live for 5 min so that you can debug..."
 sleep 300
 exit 1

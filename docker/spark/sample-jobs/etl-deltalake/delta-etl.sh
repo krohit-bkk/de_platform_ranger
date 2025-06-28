@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# Blue info log
+function info() {
+  echo -e "\n\e[1;34m[$(date '+%Y-%m-%d %H:%M:%S')] - $1\e[0m\n"
+}
+
 # This script tests Delta Lake functionality with Spark
-echo "Testing Delta Lake functionality..."
+info "Testing Delta Lake functionality..."
 
 # Setup environment variables
 source /opt/setup-env.sh
-echo -e "\nHMS_URI: ${HMS_URI}\n"
+info "\nHMS_URI: ${HMS_URI}\n"
 
 # Installing delta-spark dependency for pyspark 
 pip install delta-spark==2.2.0
@@ -15,15 +20,15 @@ pip install delta-spark==2.2.0
 # curl -o /opt/bitnami/spark/jars/delta-storage-2.2.0.jar   https://repo1.maven.org/maven2/io/delta/delta-storage/2.2.0/delta-storage-2.2.0.jar
 
 # Wait for Spark master to be ready
-echo "Waiting for Spark master to be ready..."
+info "Waiting for Spark master to be ready..."
 while ! nc -z spark-master 7077 >/dev/null; do
-  echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is not up yet! Checked at [spark-master:7077]. Retrying in 10 seconds..."
+  info "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is not up yet! Checked at [spark-master:7077]. Retrying in 10 seconds..."
   sleep 10
 done
-echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is up at [spark-master:7077]! \n"
+info "[$(date '+%Y-%m-%d %H:%M:%S')] - Spark master is up at [spark-master:7077]! \n"
 
 # Submit the Delta Lake demo job
-echo "Submitting Delta Lake demo job..."
+info "Submitting Delta Lake demo job..."
 /opt/bitnami/spark/bin/spark-submit \
   --master spark://spark-master:7077 \
   --num-executors 2 \
@@ -46,10 +51,10 @@ echo "Submitting Delta Lake demo job..."
   /opt/spark/jobs/etl-deltalake/delta-etl.py
 
 if [ $? -eq "0" ]; then 
-  echo "Spark ETL job test completed!"
+  info "Spark ETL job test completed!"
   exit 0
 fi 
 
-echo ">>>> Spark ETL job failed! I'll be live for 5 min so that you can debug..."
+info ">>>> Spark ETL job failed! I'll be live for 5 min so that you can debug..."
 sleep 300
 exit 1

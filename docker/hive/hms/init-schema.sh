@@ -1,23 +1,28 @@
 #!/bin/bash
 
+# Prints messages in blue color for better visibility
+function info() {
+  echo -e "\n\e[1;34m$1\e[0m\n"
+} 
+
 curr_user=$(whoami)
-echo -e "\n>>>> User in action (inside init-schema.sh): $curr_user\n"
+info ">>>> User in action (inside init-schema.sh): $curr_user"
 
 # This script initializes and starts Hive Metastore
-echo ">>>> Initializing Hive services..."
+info ">>>> Initializing Hive services..."
 
 # Wait for PostgreSQL to be ready
-echo ">>>> Waiting for PostgreSQL to be ready..."
+info ">>>> Waiting for PostgreSQL to be ready..."
 until pg_isready -h postgres -p 5432; do sleep 2; done
 
 # Initialize schema if not exists
 if [ ! -f /metastore/metastore_db/metastore.script ]; then
-  echo ">>>> Creating Hive metastore schema..."
+  info ">>>> Creating Hive metastore schema..."
   $HIVE_HOME/bin/schematool -dbType postgres -initSchema --verbose
 fi
 
 # Start Metastore in background with IS_RESUME
-echo ">>>> Starting Hive Metastore..."
+info ">>>> Starting Hive Metastore..."
 export IS_RESUME="true"
 $HIVE_HOME/bin/hive --service metastore &
 sleep 10
@@ -63,4 +68,4 @@ cat sample_table.hql
 # Create default schemas and tables
 $HIVE_HOME/bin/hive -v -f sample_table.hql
 
-echo -e "\n\n>>>> Hive services started successfully!\nMetastore PID: $(pgrep -f 'metastore')\n\n"
+info "\n\n>>>> Hive services started successfully!\nMetastore PID: $(pgrep -f 'metastore')\n\n"

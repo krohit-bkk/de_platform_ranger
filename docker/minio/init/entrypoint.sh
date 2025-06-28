@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-echo "🔐 Fetching MinIO credentials from Vault..."
+# Blue info log
+function info() {
+  echo -e "\n\e[1;34m[$(date '+%Y-%m-%d %H:%M:%S')] - $1\e[0m\n"
+}
+
+info "🔐 Fetching MinIO credentials from Vault..."
 
 # Wait for Vault to be ready
 until echo "$(curl -s http://vault:8200/v1/sys/health)" | \
   case $(cat) in *'"initialized":true,"sealed":false'*) true;; *) false;; esac
 do
-  echo "Waiting for Vault to be ready..."
+  info "Waiting for Vault to be ready..."
   sleep 2
 done
 
@@ -25,11 +30,11 @@ fetch_from_vault() {
     | jq -r ".data.data[\"${key}\"]"
 }
 
-echo "🔐 Fetching MinIO credentials from Vault..."
-export MINIO_ROOT_USER=$(fetch_from_vault "root_user" "data-platform/minio")
-export MINIO_ROOT_PASSWORD=$(fetch_from_vault "root_password" "data-platform/minio")
+info "🔐 Fetching MinIO credentials from Vault..."
+export MINIO_ROOT_USER=$(fetch_from_vault "minio_root_user" "data-platform/minio")
+export MINIO_ROOT_PASSWORD=$(fetch_from_vault "minio_root_password" "data-platform/minio")
 
-echo "✅ Got MinIO creds from Vault\n"
+info "✅ Got MinIO creds from Vault\n"
 
 # Start MinIO server in background
 minio server /data --console-address :9001 &
@@ -38,7 +43,7 @@ minio server /data --console-address :9001 &
 sleep 10
 
 # Create buckets
-echo "Going to create buckets..."
+info "Going to create buckets..."
 /create-buckets.sh
 
 # Keep container running

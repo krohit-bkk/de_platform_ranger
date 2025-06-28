@@ -19,8 +19,8 @@ fetch_from_vault() {
 # Get MinIO secrets from Vault
 echo -e "\n🔐 Fetching MinIO credentials from Vault..."
 export MINIO_ENDPOINT=$(fetch_from_vault "minio_endpoint" "data-platform/minio")
-export MINIO_ROOT_USER=$(fetch_from_vault "root_user" "data-platform/minio")
-export MINIO_ROOT_PASSWORD=$(fetch_from_vault "root_password" "data-platform/minio")
+export MINIO_ROOT_USER=$(fetch_from_vault "minio_root_user" "data-platform/minio")
+export MINIO_ROOT_PASSWORD=$(fetch_from_vault "minio_root_password" "data-platform/minio")
 
 # Get Hive Metastore secrets from Vault
 echo -e "\n🔐 Fetching Hive Metastore credentials from Vault... "
