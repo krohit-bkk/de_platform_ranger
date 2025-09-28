@@ -120,6 +120,7 @@ alias start_spark="build_if_missing && docker-compose --env-file .env.evaluated 
 
 # Trino services
 alias start_trino="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2"
+alias test_trino="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-test"
 
 # START ALL SERVICES
 # ==================
@@ -148,7 +149,7 @@ function start_all(){
   sleep 10
 
   # Trino services
-  # docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2
+  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2
 }
 
 # STOP ALL SERVICES

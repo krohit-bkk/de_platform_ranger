@@ -56,6 +56,11 @@ prepare_folders
 - Services running on Docker
 ![alt text](<artifacts/images/containers.png>)
 
+- HashiCorp Vault
+![alt text](<artifacts/images/vault.png>)
+
+- MinIO Buckets 
+![alt text](<artifacts/images/minio.png>)
 
 - Logs from Spark-DeltaLake job
 ![alt text](<artifacts/images/delta-lake-job-logs.png>)
@@ -64,7 +69,11 @@ prepare_folders
 - Spark history server web-UI
 ![alt text](<artifacts/images/spark-history-server-ui.png>)
 
+- Test Trino service
+![alt text](<artifacts/images/test-trino-job.png>)
+
 ---
+
 
 **To-do/Next steps**
 
