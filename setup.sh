@@ -123,7 +123,7 @@ alias start_trino="docker-compose --env-file .env.evaluated -f ./docker-compose/
 
 # START ALL SERVICES
 # ==================
-function start_all1(){
+function start_all(){
   # Base service
   start_base
   sleep 5
@@ -153,7 +153,7 @@ function start_all1(){
 
 # STOP ALL SERVICES
 # =================
-function clean_all(){
+function stop_all(){
   # Stop Trino services
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml down -v
   sleep 3
