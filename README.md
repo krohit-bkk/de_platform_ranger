@@ -1,5 +1,19 @@
-### How to run
-1. Setup the environment variables
+## Data Engineering Platform on Docker
+
+This project provides a comprehensive, containerized data platform built entirely on Docker Compose. It's designed to simulate a modern data stack on a local machine, making it an ideal environment for developing, testing, and learning data engineering concepts without the need for cloud infrastructure.
+
+The platform integrates several key open-source technologies:
+
+*   **Processing:** **Apache Spark** for large-scale data processing, with a dedicated History Server.
+*   **Storage:** **MinIO** as an S3-compatible object storage layer for raw, processed, and curated data.
+*   **Metadata:** **Hive Metastore** backed by PostgreSQL to manage schemas and table metadata.
+*   **Querying:** **HiveServer2** and **Trino** for interactive SQL querying across different data sources.
+*   **Security:** **HashiCorp Vault** for securely managing and injecting secrets like database passwords and API keys.
+
+---
+
+### How to 
+**1. Setup the environment variables**
 - Registers the functions and aliases
 - Setup the `PROJECT_ROOT` and builds `.env.evaluated` file
 ```shell
@@ -7,7 +21,7 @@ source setup.sh
 bash setup.sh
 ```
 
-2. Starting the services
+**2. Starting the services**
 - Launch the services manually
     - Please maintain the order of launching the services
         - **base** -> command: `start_base`
@@ -25,17 +39,32 @@ bash setup.sh
 - Launch the services automatically
     - Ensures the order of execution as mentioned above -> command: `start_all`
 
-3. Stopping the services
+**3. Stopping the services**
 - Stop all the services in the reverese order of launching the services -> command: `stop_all` 
 
-4. Wipe everything & Reset
+**4. Wipe everything & Reset**
 - Kill & delete all services -> command: `wipe_everything`
     - ⚠️ **Caution**
         - This function deletes all containers which are listed in `docker ps -a`!
         - If working on multiple projects in your docker setup, the above command would kill all of the containers!
-    
 
-To do:
+---
+
+### Screenshots from successful setup
+- Services running on Docker
+![alt text](<artifacts/images/containers.png>)
+
+
+- Logs from Spark-DeltaLake job
+![alt text](<artifacts/images/delta-lake-job-logs.png>)
+
+
+- Spark history server web-UI
+![alt text](<artifacts/images/spark-history-server-ui.png>)
+
+---
+
+**To-do/Next steps**
 
 -> [DONE] Standardize the Key/Value pairs in vault.
 
