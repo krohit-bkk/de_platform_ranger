@@ -55,6 +55,20 @@
         <value>false</value>
         <description>Disable SSL for local MinIO</description>
     </property>
+
+    <!-- Event Logging for History Server -->
+    <property>
+        <name>spark.eventLog.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>spark.eventLog.dir</name>
+        <value>/opt/bitnami/spark/logs/spark-events</value>
+    </property>
+    <property>
+        <name>spark.eventLog.compress</name>
+        <value>true</value>
+    </property>
     
     <!-- Delta Lake configuration -->
     <property>

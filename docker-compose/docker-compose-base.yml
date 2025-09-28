@@ -57,6 +57,14 @@ volumes:
       device: ${PROJECT_ROOT}/data/spark_data
       o: bind
 
+  spark_history_server_data:
+    name: spark_history_server_data
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PROJECT_ROOT}/data/spark_history_server_data
+      o: bind
+
   trino_data:
     name: trino_data
     driver: local
@@ -97,6 +105,7 @@ services:
       - postgres_ranger_data:/mnt/pg_ranger
       - vault_data:/mnt/vault
       - spark_data:/mnt/spark
+      - spark_history_server_data:/mnt/spark_history_server_data
       - trino_data:/mnt/trino
       - airflow_data:/mnt/airflow
       - superset_data:/mnt/superset

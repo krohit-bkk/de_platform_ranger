@@ -24,6 +24,9 @@ services:
     ports:
       - "9083:9083"
     volumes:
+      - ../docker/hive/lib/postgresql-42.2.18.jar:/opt/hive/lib/postgresql-42.2.18.jar
+      - ../docker/hive/lib/hadoop-aws-3.3.1.jar:/opt/hive/lib/hadoop-aws-3.3.1.jar
+      - ../docker/hive/lib/aws-java-sdk-bundle-1.11.375.jar:/opt/hive/lib/aws-java-sdk-bundle-1.11.375.jar
       - ../docker/hive/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
       - ../docker/hive/hms/hms-setup.sh:/opt/hive/hms-setup.sh
       - ../docker/hive/hms/init-schema.sh:/opt/hive/init-schema.sh
@@ -52,6 +55,9 @@ services:
       - "10000:10000"  
       - "10002:10002"  
     volumes:
+      - ../docker/hive/lib/postgresql-42.2.18.jar:/opt/hive/lib/postgresql-42.2.18.jar
+      - ../docker/hive/lib/hadoop-aws-3.3.1.jar:/opt/hive/lib/hadoop-aws-3.3.1.jar
+      - ../docker/hive/lib/aws-java-sdk-bundle-1.11.375.jar:/opt/hive/lib/aws-java-sdk-bundle-1.11.375.jar
       - ../docker/hive/conf/hive-site.xml.tmpl:/opt/hive/conf/hive-site.xml.tmpl
       - ../docker/hive/conf/core-site.xml.tmpl:/opt/hive/conf/core-site.xml.tmpl
       - ../docker/hive/conf/hive-log4j2.properties:/opt/hive/conf/hive-log4j2.properties

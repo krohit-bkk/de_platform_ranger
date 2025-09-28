@@ -20,11 +20,31 @@ apt-get update && apt-get install -y curl jq gettext netcat net-tools gosu wget 
 ip=$(getent hosts hive-metastore | awk '{ print $1 }')
 echo "${ip} hive-metastore" >> /etc/hosts
 
-# Downloading dependencies
-wget -P /opt/hive/lib/ https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.375/aws-java-sdk-bundle-1.11.375.jar
-wget -P /opt/hive/lib/ https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar
-wget -P /opt/hive/lib/ https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar
-info -e "\n>>>> Fetching Vault secrets for PostgreSQL...\n"
+# Defining dependencies
+declare -A jars=(
+  ["aws-java-sdk-bundle-1.11.375.jar"]="https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.375/aws-java-sdk-bundle-1.11.375.jar"
+  ["hadoop-aws-3.2.0.jar"]="https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar"
+  ["postgresql-42.3.1.jar"]="https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar"
+)
+
+# Target directory
+TARGET_DIR="/opt/hive/lib"
+
+# Ensure target directory exists
+mkdir -p "$TARGET_DIR"
+
+# Download only if not already present
+for jar in "${!jars[@]}"; do
+  if [[ ! -f "$TARGET_DIR/$jar" ]]; then
+    info "⬇️  Downloading $jar..."
+    wget -q -P "$TARGET_DIR" "${jars[$jar]}"
+  else
+    info "✅ $jar already exists. Skipping download."
+  fi
+done
+
+info ">>>> wget done"
+install -d -m 777 /tmp/hive 
 
 # Get secrets from Vault
 export VAULT_ADDR=http://vault:8200

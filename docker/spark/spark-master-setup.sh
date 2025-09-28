@@ -9,9 +9,17 @@ function info() {
 source /opt/setup-env.sh 
 # source /opt/download-jars.sh  # Baked in custom-spark image
 
+# Create spark-events directory
+mkdir -p /opt/bitnami/spark/logs/spark-events
+
 info "\nHMS_URI: ${HMS_URI}\n"
 
-# 🧪 Render hive-site.xml dynamically
+
+# 🧪 Render spark-defaults.conf dynamically
+info "🧪 Rendering spark-defaults.conf... \n"
+envsubst < /opt/bitnami/spark/conf/spark-defaults.conf.tmpl > /opt/bitnami/spark/conf/spark-defaults.conf
+
+# 🧪 Render spark-defaults.xml dynamically
 info "🧪 Rendering spark-defaults.xml... \n"
 envsubst < /opt/bitnami/spark/conf/spark-defaults.xml.tmpl > /opt/bitnami/spark/conf/spark-defaults.xml
 

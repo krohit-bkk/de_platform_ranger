@@ -25,6 +25,9 @@ info "Submitting sample ETL job...\n"
 /opt/bitnami/spark/bin/spark-submit \
   --master spark://spark-master:7077 \
   --conf spark.jars.ivy=/tmp/.ivy \
+  --conf spark.eventLog.enabled=true \
+  --conf spark.eventLog.dir=s3a://spark-logs/spark-events \
+  --conf spark.eventLog.outputStreamName=org.apache.spark.io.S3AFileOutputStream \
   --conf spark.sql.catalogImplementation=hive \
   --conf "spark.hadoop.hive.metastore.uris=${HMS_URI}" \
   --conf "spark.hadoop.fs.s3a.endpoint=${MINIO_ENDPOINT}" \
@@ -34,8 +37,7 @@ info "Submitting sample ETL job...\n"
   --conf "spark.hadoop.fs.s3a.path.style.access=true" \
   --conf "spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem" \
   --conf "spark.hadoop.fs.s3a.connection.ssl.enabled=false" \
-  --conf "spark.driver.extraJavaOptions=-Dlog4j.rootCategory=WARN,console" \
-  --conf "spark.driver.extraJavaOptions=-Dlog4j.configuration=file:/opt/bitnami/spark/conf/log4j.properties" \
+  --conf "spark.driver.extraJavaOptions=-Dlog4j.configuration=file:/opt/bitnami/spark/conf/log4j.properties -Dlog4j.rootCategory=WARN,console" \
   /opt/spark/jobs/etl-regular/etl.py
 
 if [ $? -eq "0" ]; then 

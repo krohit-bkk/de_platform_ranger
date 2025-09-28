@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  # Spark History Server
+  spark-history-server:
+    image: bitnami/spark:3.3.0
+    container_name: spark-history-server
+    user: root
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - "18080:18080"
+    volumes:
+      - spark_history_server_data:/opt/bitnami/spark/logs
+      - ../docker/spark/conf/spark-defaults.conf.tmpl:/opt/bitnami/spark/conf/spark-defaults.conf.tmpl
+      - ../docker/spark/spark-history-server-setup.sh:/opt/bitnami/spark/spark-history-server-setup.sh
+    command: /bin/bash /opt/bitnami/spark/spark-history-server-setup.sh
+    networks:
+      - data_platform_network
+
   # Apache Spark for ETL
   spark-master:
     image: custom-spark:0.0.1
@@ -81,9 +98,11 @@ services:
     user: root
     depends_on:
       - spark-master
+      - spark-worker-1
+      - spark-worker-2
     volumes:
       - ../docker/spark/sample-jobs:/opt/spark/jobs
-      - ../docker/spark/conf/log4j.properties:/opt/bitnami/spark/conf/log4j.properties
+      - ../docker/spark/conf/log4j.properties:/opt/bitnami/spark/conf/log4j.properties      
     entrypoint: ["/bin/bash", "/opt/spark/jobs/etl-regular/etl.sh"]
     networks:
       - data_platform_network
@@ -110,4 +129,6 @@ networks:
 
 volumes:
   spark_data:
+    external: true
+  spark_history_server_data:
     external: true

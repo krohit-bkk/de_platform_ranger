@@ -17,4 +17,16 @@ done
 mc cp --recursive /sample_data/ "myminio/raw-data/"
 mc ls myminio/raw-data/
 
+# Upload a sample file
+echo "1,A,Foo" >> sample-file.csv
+echo "2,B,Bar" >> sample-file.csv
+
+# Create logs history bucket for Spark history server
+mc mb myminio/spark-logs --ignore-existing
+# Create a "folder" by uploading an empty file to the spark-events path
+touch empty.txt
+mc cp empty.txt myminio/spark-logs/spark-events/
+mc cp sample-file.csv myminio/spark-logs/spark-events/
+mc ls myminio/spark-logs/spark-events/
+
 info "🎉 Buckets created"

@@ -15,39 +15,42 @@ echo -e "
 envsubst < ${PROJECT_ROOT}/.env | tee ${PROJECT_ROOT}/.env.evaluated
 
 # Create base directories
-install -d -m 775 "$PROJECT_ROOT"/data
-mkdir -p "${PROJECT_ROOT}/data"/{minio_data,postgres_hms_data,hive_hs2_data,hive_data,postgres_ranger_data,vault_data,spark_data,trino_data,airflow_data,superset_data}
-chmod -R 777 "${PROJECT_ROOT}/data"/{minio_data,postgres_hms_data,hive_hs2_data,hive_data,postgres_ranger_data,vault_data,spark_data,trino_data,airflow_data,superset_data}
+function prepare_folders(){
+  install -d -m 775 "$PROJECT_ROOT"/data
+  mkdir -p "${PROJECT_ROOT}/data"/{minio_data,postgres_hms_data,hive_hs2_data,hive_data,postgres_ranger_data,vault_data,spark_data,spark_history_server_data,trino_data,airflow_data,superset_data}
+  chmod -R 777 "${PROJECT_ROOT}/data"/{minio_data,postgres_hms_data,hive_hs2_data,hive_data,postgres_ranger_data,vault_data,spark_data,spark_history_server_data,trino_data,airflow_data,superset_data}
 
-# HMS and HS2 directories maps to HDFS dir inside container - /tmp/hive 
-install -d -m 777 "${PROJECT_ROOT}/data/hive_data/hive-tmp"
-install -d -m 777 "${PROJECT_ROOT}/data/hive_hs2_data/hive-tmp"
-chmod -R 777 ${PROJECT_ROOT}/data/hive_data
-chmod -R 777 ${PROJECT_ROOT}/data/hive_hs2_data
+  # HMS and HS2 directories maps to HDFS dir inside container - /tmp/hive 
+  install -d -m 777 "${PROJECT_ROOT}/data/hive_data/hive-tmp"
+  install -d -m 777 "${PROJECT_ROOT}/data/hive_hs2_data/hive-tmp"
+  chmod -R 777 ${PROJECT_ROOT}/data/hive_data
+  chmod -R 777 ${PROJECT_ROOT}/data/hive_hs2_data
 
-echo -e "
-  Directories created
-  ===================
-  Data directory: ${PROJECT_ROOT}/data
-  Subdirectories created:
-    - minio_data
-    - postgres_hms_data
-    - postgres_ranger_data
-    - vault_data
-    - spark_data
-    - trino_data
-    - airflow_data
-    - superset_data
-    - data/hive_data/hive-tmp"
-ls -lrt ${PROJECT_ROOT}/data/
+  echo -e "
+    Directories created
+    ===================
+    Data directory: ${PROJECT_ROOT}/data
+    Subdirectories created:
+      - minio_data
+      - postgres_hms_data
+      - postgres_ranger_data
+      - vault_data
+      - spark_data
+      - spark_history_server_data
+      - trino_data
+      - airflow_data
+      - superset_data
+      - data/hive_data/hive-tmp"
+  ls -lrt ${PROJECT_ROOT}/data/
 
 
-# Execute permissions for Spark jobs
-sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-master-setup.sh
-sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-worker-setup.sh
-sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-coordinator.sh
-sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-worker.sh
-sudo chmod +x ${PROJECT_ROOT}/docker/trino/jobs/trino-test.sh
+  # Execute permissions for Spark jobs
+  sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-master-setup.sh
+  sudo chmod +x ${PROJECT_ROOT}/docker/spark/spark-worker-setup.sh
+  sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-coordinator.sh
+  sudo chmod +x ${PROJECT_ROOT}/docker/trino/setup-worker.sh
+  sudo chmod +x ${PROJECT_ROOT}/docker/trino/jobs/trino-test.sh
+}
 
 # DOCKER UTILS
 # ============
@@ -74,33 +77,82 @@ function all(){
   networks
 }
 
-# Start all services
-function start_all(){
+# BUILD CUSTOM DOCKER IMAGES
+# =========================
+# docker build --no-cache -t custom-spark:0.0.1 ${PROJECT_ROOT}/docker/spark/
+build_if_missing() {
+  local image_name="custom-spark:0.0.1"
+  local build_path="${PROJECT_ROOT}/docker/spark/"
+
+  if ! docker image inspect "$image_name" > /dev/null 2>&1; then
+    echo "Image $image_name not found locally. Building now..."
+    docker build -t "$image_name" "$build_path"
+  else
+    echo "Image $image_name already exists locally. Skipping build."
+  fi
+}
+
+
+# FIRE UP DOCKER COMPOSE/SERVICES MANUALLY
+# ========================================
+# Base service
+alias start_base="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml up -d "
+
+# Vault service
+alias start_vault="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d"
+
+# MinIO service
+alias start_minio="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d"
+
+# Hive Metastore service
+alias start_hms="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d"
+
+# HiveServer2 service
+alias start_hs2="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d hiveserver2"
+
+# Test Spark ETL jobs
+alias spark_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-test"
+alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d delta-lake-test"
+
+# Spark services
+alias start_sparkhistory="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-history-server"
+alias start_spark="build_if_missing && docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-master spark-worker-1 spark-worker-2"
+
+# Trino services
+alias start_trino="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2"
+
+# START ALL SERVICES
+# ==================
+function start_all1(){
   # Base service
-  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml up -d 
+  start_base
   sleep 5
 
   # Vault service
-  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d
+  start_vault
   sleep 10
 
   # MinIO service
-  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d
+  start_minio
   sleep 10
 
   # Hive (HMS + HS2) services
-  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d
+  start_hms
+  start_hs2
   sleep 10
 
   # Build custom-spark image and start Spark services
-  # docker build --no-cache -t custom-spark:0.0.1 ${PROJECT_ROOT}/docker/spark/
-  docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-master spark-worker-1 spark-worker-2
+  # Spark history server service
+  start_sparkhistory
+  start_spark
+  sleep 10
 
   # Trino services
   # docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml up -d trino-coordinator trino-worker-1 trino-worker-2
 }
 
-# Stop all services
+# STOP ALL SERVICES
+# =================
 function clean_all(){
   # Stop Trino services
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-trino.yml down -v
@@ -126,7 +178,8 @@ function clean_all(){
   docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml down -v
 }
 
-
+# WIPE EVERYTHING
+# ===============
 # Remove all containers, images, networks, and volumes
 function wipe_everything(){
   # Remove all containers
@@ -137,9 +190,13 @@ function wipe_everything(){
   docker network prune -f
   # Remoce data folder for mounts
   sudo rm -rf ${PROJECT_ROOT}/data
+
+  # Recreate base directories
+  prepare_folders
 }
 
-# Kill services... 
+# KILL ALL SERVICES
+# =================
 # Usage: kill_service <service_name1> <service_name2> ...
 function kill_service() {
   for svc in "$@"; do
@@ -173,27 +230,6 @@ function kill_service() {
     echo ""
   done
 }
-
-# FIRE UP DOCKER COMPOSE/SERVICES MANUALLY
-# ========================================
-# Base service
-alias start_base="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-base.yml up -d "
-
-# Vault service
-alias start_vault="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-vault.yml up -d && logs -f vault"
-
-# MinIO service
-alias start_minio="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-minio.yml up -d && logs -f minio"
-
-# Hive Metastore service
-alias start_hms="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d && logs -f hive-metastore"
-
-# HiveServer2 service
-alias start_hs2="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-hive.yml up -d hiveserver2 && logs -f hiveserver2"
-
-# Test Spark ETL jobs
-alias spark_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d spark-test && logs -f spark-test"
-alias deltalake_test="docker-compose --env-file .env.evaluated -f ./docker-compose/docker-compose-spark.yml up -d delta-lake-test && logs -f delta-lake-test"
 
 # Create custom docker images
 # ===========================

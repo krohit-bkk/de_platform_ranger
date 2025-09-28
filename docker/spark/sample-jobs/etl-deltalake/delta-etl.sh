@@ -33,6 +33,9 @@ info "Submitting Delta Lake demo job..."
   --master spark://spark-master:7077 \
   --num-executors 2 \
   --conf spark.jars.ivy=/tmp/.ivy \
+  --conf spark.eventLog.enabled=true \
+  --conf spark.eventLog.dir=s3a://spark-logs/spark-events \
+  --conf spark.eventLog.outputStreamName=org.apache.spark.io.S3AFileOutputStream \
   --conf spark.sql.catalogImplementation=hive \
   --conf "spark.hadoop.hive.metastore.uris=${HMS_URI}" \
   --conf "spark.hadoop.fs.s3a.endpoint=${MINIO_ENDPOINT}" \
@@ -42,13 +45,12 @@ info "Submitting Delta Lake demo job..."
   --conf "spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem" \
   --conf "spark.hadoop.fs.s3a.connection.ssl.enabled=false" \
   --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
-  --conf "spark.driver.extraJavaOptions=-Dlog4j.logger.org.apache=WARN" \
+  --conf "spark.driver.extraJavaOptions=-Dlog4j.configuration=file:/opt/bitnami/spark/conf/log4j.properties -Dlog4j.rootCategory=WARN,console -Dlog4j.logger.org.apache=WARN" \
   --conf "spark.executor.extraJavaOptions=-Dlog4j.logger.org.apache=WARN" \
-  --conf "spark.driver.extraJavaOptions=-Dlog4j.rootCategory=WARN,console" \
-  --conf "spark.driver.extraJavaOptions=-Dlog4j.configuration=file:/opt/bitnami/spark/conf/log4j.properties" \
   --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" \
-  --jars /opt/bitnami/spark/jars/delta-core_2.12-2.2.0.jar,/opt/bitnami/spark/jars/delta-storage-2.2.0.jar \
   /opt/spark/jobs/etl-deltalake/delta-etl.py
+
+# --jars /opt/bitnami/spark/jars/delta-core_2.12-2.2.0.jar,/opt/bitnami/spark/jars/delta-storage-2.2.0.jar \
 
 if [ $? -eq "0" ]; then 
   info "Spark ETL job test completed!"
