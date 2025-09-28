@@ -16,9 +16,11 @@ The platform integrates several key open-source technologies:
 **1. Setup the environment variables**
 - Registers the functions and aliases
 - Setup the `PROJECT_ROOT` and builds `.env.evaluated` file
+- Prepare data directories (mapped as volumes with the containers)
 ```shell
 source setup.sh
 bash setup.sh
+prepare_folders
 ```
 
 **2. Starting the services**
